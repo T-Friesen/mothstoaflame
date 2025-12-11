@@ -19,6 +19,11 @@ public class PlayerMovement : MonoBehaviour
         player.Enable();
     }
 
+    private void OnDisable()
+    {
+        player.Disable();
+    }
+
     void Update()
     {
         PlayerInput();
