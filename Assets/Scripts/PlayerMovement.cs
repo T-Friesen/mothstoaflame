@@ -37,6 +37,12 @@ public class PlayerMovement : MonoBehaviour
     private void PlayerInput()
     {
         movementInput = player.Movement.Move.ReadValue<Vector2>();
+
+        // Clamp to a maximum magnitude of 1 so diagonal movement isn't faster
+        if (movementInput.sqrMagnitude > 1f)
+        {
+            movementInput = movementInput.normalized;
+        }
     }
 
     private void Move()
