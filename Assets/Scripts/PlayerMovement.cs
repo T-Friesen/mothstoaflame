@@ -3,18 +3,51 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private Player player;
+    private Vector2 movementInput;
+    private Rigidbody2D rb;
     [SerializeField] private float speed = 5f;
+
+    private void Awake()
+    {
+        player = new Player();
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    private void OnEnable()
+    {
+        player.Enable();
+    }
+
+    private void OnDisable()
+    {
+        player.Disable();
+    }
 
     void Update()
     {
-        Vector2 input = Vector2.zero;
+        PlayerInput();
+    }
 
-        if (Keyboard.current.wKey.isPressed) input.y += 1;
-        if (Keyboard.current.sKey.isPressed) input.y -= 1;
-        if (Keyboard.current.aKey.isPressed) input.x -= 1;
-        if (Keyboard.current.dKey.isPressed) input.x += 1;
+    private void FixedUpdate()
+    {
+        Move();
+    }
 
-        Vector3 move = new Vector3(input.x, input.y, 0f).normalized;
-        transform.Translate(move * speed * Time.deltaTime, Space.World);
+    private void PlayerInput()
+    {
+        movementInput = player.Movement.Move.ReadValue<Vector2>();
+
+        // Clamp to a maximum magnitude of 1 so diagonal movement isn't faster
+        if (movementInput.sqrMagnitude > 1f)
+        {
+            movementInput = movementInput.normalized;
+        }
+    }
+
+    private void Move()
+    {
+        Vector2 movement = movementInput * speed * Time.fixedDeltaTime;
+        rb.MovePosition(rb.position + movement);
     }
 }
